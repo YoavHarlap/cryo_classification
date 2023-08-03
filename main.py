@@ -17,7 +17,7 @@ def create_points_list_from_csv(file_path):
     # Create an empty list to store the points
     points_list = []
 
-    # Iterate throu633gh the DataFrame rows and extract X and Y coordinates
+    # Iterate throu6733gh the DataFrame rows and extract X and Y coordinates
     for index, row in df.iterrows():
         x_coordinate = row['X-Coordinate']
         y_coordinate = row['Y-Coordinate']
