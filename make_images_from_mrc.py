@@ -1,18 +1,20 @@
-import mrcfile
+import os
 import numpy as np
+import matplotlib.pyplot as plt
+from scipy.ndimage import gaussian_filter
+import mrcfile
+
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter
 
 import pandas as pd
-
-"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"
-
+import pandas as pd
 def create_points_list_from_csv(file_path):
     # Read the CSV file into a DataFrame
     df = pd.read_csv(file_path)
 
     # Print the DataFrame's head to verify the column names and data
-    print(df.head())
+    # print(df.head())
 
     # Create an empty list to store the points
     points_list = []
@@ -93,16 +95,13 @@ def get_img_from_mrc(mrc_file_path):
 #     # Show the plot
 #     plt.show()
 
-def plot_mrc_file_with_circles(mrc_file_path, points_list, radius=256 / 2,outliers_flag = False):
+def plot_mrc_file_with_circles(mrc_file_path, points_list, radius=256 / 2):
     # Load the image data from the MRC file (replace this with your actual function to read MRC files)
     image = get_img_from_mrc(mrc_file_path)
 
     # Define the standard deviation (sigma) for the Gaussian filter
     sigma = 10
-    if(outliers_flag):
-        color = 'red'
-    else:
-        color = 'blue'
+
     # Apply the Gaussian filter to the image
     filtered_image = gaussian_filter(image, sigma=sigma)
 
@@ -116,7 +115,7 @@ def plot_mrc_file_with_circles(mrc_file_path, points_list, radius=256 / 2,outlie
 
     # Plot the filtered image
     ax[1].imshow(filtered_image, cmap='gray')
-    ax[1].set_title(f'Filtered Image (sigma={sigma}) and particles coordinate')
+    ax[1].set_title(f'Filtered Image (sigma={sigma}) and coordinate')
     ax[1].axis('off')
 
     # Plot circles on the filtered image
@@ -125,7 +124,7 @@ def plot_mrc_file_with_circles(mrc_file_path, points_list, radius=256 / 2,outlie
         center_x, center_y = point
 
         # Create a circle object
-        circle = plt.Circle((center_x, center_y), radius, color=color, fill=False)
+        circle = plt.Circle((center_x, center_y), radius, color='red', fill=False)
 
         # Add the circle to the plot
         ax[1].add_patch(circle)
@@ -161,33 +160,57 @@ def crop_images_from_points(image_data, points_list, square_size):
     return np.array(cropped_images)
 
 
-if __name__ == "__main__":
-    mrc_file_path = "/data/yoavharlap/10028_small/micrographs/061.mrc"
+def process_files(mrc_file_path, coordinates_csv_path, square_size):
     image = get_img_from_mrc(mrc_file_path)
-    # plot_mrc_file(mrc_file_path)
-    coordinates_csv_path = "/data/yoavharlap/10028_small/ground_truth/particle_coordinates/061.csv"
-    coordinates_csv_path = "/data/yoavharlap/10028_small/ground_truth/false_positives/061_false_positives.csv"
-
     points = create_points_list_from_csv(coordinates_csv_path)
-    print("coordinates:", points)
     points = reflect_points(points, len(image))
-    # plot_mrc_file_with_circles(mrc_file_path, points, outliers_flag=False)
-
     image_data = np.array(image)
+    cropped_images_array = crop_images_from_points(image_data, points, square_size)
+    return cropped_images_array
 
-    points_list = points
-    square_size = 256  # Replace this with the size of the squares you want to crop
 
-    cropped_images_array = crop_images_from_points(image_data, points_list, square_size)
-    print(cropped_images_array.shape)  # (Number_of_points, square_size, square_size)
+import os
+import numpy as np
+import matplotlib.pyplot as plt
 
-    # Show the first ten cropped images
-    num_images_to_show = 10
-    for i in range(min(num_images_to_show, cropped_images_array.shape[0])):
-        plt.subplot(2, 5, i + 1)  # Create a 2x5 grid for the images
-        plt.imshow(cropped_images_array[i], cmap='gray')
-        plt.title(f"outlier {i + 1}")
-        plt.axis('off')
 
-    plt.tight_layout()  # Adjust the layout for better spacing
-    plt.show()
+def process_files(mrc_file_path, coordinates_csv_path, square_size):
+    image = get_img_from_mrc(mrc_file_path)
+    points = create_points_list_from_csv(coordinates_csv_path)
+    points = reflect_points(points, len(image))
+    image_data = np.array(image)
+    cropped_images_array = crop_images_from_points(image_data, points, square_size)
+    return cropped_images_array
+
+
+if __name__ == "__main__":
+    input_folder = "/data/yoavharlap/10028/micrographs/"
+    coordinates_folder = "/data/yoavharlap/10028/ground_truth/false_positives/"
+    output_npy_file = "/data/yoavharlap/10028_classification/outliers_images.npy"
+
+    square_size = 256
+    all_images = []
+
+    for filename in os.listdir(input_folder):
+        if filename.endswith(".mrc"):
+            mrc_file_path = os.path.join(input_folder, filename)
+            basename = os.path.splitext(filename)[0]
+            coordinates_csv_path = os.path.join(coordinates_folder, f"{basename}_false_positives.csv")
+            # coordinates_csv_path = os.path.join(coordinates_folder, f"{basename}.csv")
+
+            if os.path.exists(coordinates_csv_path):
+                cropped_images_array = process_files(mrc_file_path, coordinates_csv_path, square_size)
+                num_processed_images = cropped_images_array.shape[0]
+                all_images.append(cropped_images_array)
+                print(f"Processed {filename} and added {num_processed_images} images to the collection")
+            else:
+                print(f"CSV file not found for {filename}")
+
+    if all_images:
+        all_images_array = np.concatenate(all_images, axis=0)  # Combine all images into one array
+
+        np.save(output_npy_file, all_images_array)
+        print(f"Saved all processed images to {output_npy_file}")
+    else:
+        print("No images were processed.")
+
