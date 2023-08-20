@@ -36,11 +36,23 @@ def show_misclassified_images(test_loader, model, device):
 
         misclassified_indices = (predict_y != test_label).nonzero().squeeze()
         correct_indices = (predict_y == test_label).nonzero().squeeze()
+        print("Shape of predict_y:", predict_y.shape)
+        print("Shape of misclassified_indices:", misclassified_indices.shape)
+
+        if predict_y.shape[0] == 0:
+            print("Predictions array is empty.")
+        else:
+            if misclassified_indices.shape[0] == 0:
+                print("Misclassified indices array is empty.")
+            else:
+                print("Attempting indexing...")
+                misclassified_labels.extend(predict_y[misclassified_indices].cpu().numpy())
+                print("Indexing successful.")
 
         misclassified_images.extend(test_x[misclassified_indices])
-        misclassified_labels.extend(predict_y[misclassified_indices])
+        misclassified_labels.extend(predict_y[misclassified_indices].cpu().numpy())  # Convert to NumPy array
         correct_images.extend(test_x[correct_indices])
-        correct_labels.extend(predict_y[correct_indices])
+        correct_labels.extend(predict_y[correct_indices].cpu().numpy())  # Convert to NumPy array
 
         if len(misclassified_images) >= 5 and len(correct_images) >= 5:
             break
@@ -65,7 +77,6 @@ def show_misclassified_images(test_loader, model, device):
     plt.show()
 
 
-
 if __name__ == '__main__':
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     batch_size = 256
@@ -74,10 +85,13 @@ if __name__ == '__main__':
     test_dataset = mnist.MNIST(root='./test', train=False, transform=ToTensor(), download=True)
 
     # Filter dataset to only include classes 0 and 1
-    train_dataset.targets = torch.where(train_dataset.targets <= 1, train_dataset.targets, torch.tensor(0))
-    test_dataset.targets = torch.where(test_dataset.targets <= 1, test_dataset.targets, torch.tensor(0))
+    train_indices = (train_dataset.targets == 0) | (train_dataset.targets == 1)
+    test_indices = (test_dataset.targets == 0) | (test_dataset.targets == 1)
 
-    train_loader = DataLoader(train_dataset, batch_size=batch_size)
+    train_dataset = torch.utils.data.Subset(train_dataset, np.where(train_indices)[0])
+    test_dataset = torch.utils.data.Subset(test_dataset, np.where(test_indices)[0])
+
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=batch_size)
 
     model = Model().to(device)
