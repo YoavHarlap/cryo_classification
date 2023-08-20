@@ -24,7 +24,9 @@ def plot_accuracy(epochs, accuracies):
 def show_misclassified_images(test_loader, model, device):
     model.eval()
     misclassified_images = []
+    misclassified_labels = []
     correct_images = []
+    correct_labels = []
 
     for idx, (test_x, test_label) in enumerate(test_loader):
         test_x = test_x.to(device)
@@ -36,7 +38,9 @@ def show_misclassified_images(test_loader, model, device):
         correct_indices = (predict_y == test_label).nonzero().squeeze()
 
         misclassified_images.extend(test_x[misclassified_indices])
+        misclassified_labels.extend(predict_y[misclassified_indices])
         correct_images.extend(test_x[correct_indices])
+        correct_labels.extend(predict_y[correct_indices])
 
         if len(misclassified_images) >= 5 and len(correct_images) >= 5:
             break
@@ -48,12 +52,12 @@ def show_misclassified_images(test_loader, model, device):
     for i in range(5):
         plt.subplot(2, 5, i + 1)
         plt.imshow(misclassified_images[i].cpu().numpy().squeeze(), cmap='gray')
-        plt.title("Misclassified")
+        plt.title(f"Misclassified\nPred: {misclassified_labels[i]}, Correct: {test_label[misclassified_indices][i].item()}")
         plt.axis('off')
 
         plt.subplot(2, 5, i + 6)
         plt.imshow(correct_images[i].cpu().numpy().squeeze(), cmap='gray')
-        plt.title("Correct")
+        plt.title(f"Correctly Classified\nPred: {correct_labels[i]}, Correct: {test_label[correct_indices][i].item()}")
         plt.axis('off')
 
     plt.tight_layout()
