@@ -21,6 +21,10 @@ def plot_accuracy(epochs, accuracies):
     plt.savefig('accuracy_plot.png')
     plt.show()
 
+
+
+import matplotlib.pyplot as plt
+
 def show_misclassified_images(test_loader, model, device):
     model.eval()
     misclassified_images = []
@@ -36,8 +40,6 @@ def show_misclassified_images(test_loader, model, device):
 
         misclassified_indices = (predict_y != test_label).nonzero().squeeze()
         correct_indices = (predict_y == test_label).nonzero().squeeze()
-        print("Shape of predict_y:", predict_y.shape)
-        print("Shape of misclassified_indices:", misclassified_indices.shape)
 
         if predict_y.shape[0] == 0:
             print("Predictions array is empty.")
@@ -45,36 +47,38 @@ def show_misclassified_images(test_loader, model, device):
             if misclassified_indices.shape[0] == 0:
                 print("Misclassified indices array is empty.")
             else:
-                print("Attempting indexing...")
+                print("Misclassified indices array is not empty.")
+                misclassified_images.extend(test_x[misclassified_indices])
                 misclassified_labels.extend(predict_y[misclassified_indices].cpu().numpy())
-                print("Indexing successful.")
 
-        misclassified_images.extend(test_x[misclassified_indices])
-        misclassified_labels.extend(predict_y[misclassified_indices].cpu().numpy())  # Convert to NumPy array
         correct_images.extend(test_x[correct_indices])
-        correct_labels.extend(predict_y[correct_indices].cpu().numpy())  # Convert to NumPy array
+        correct_labels.extend(predict_y[correct_indices].cpu().numpy())
 
         if len(misclassified_images) >= 5 and len(correct_images) >= 5:
             break
 
-    misclassified_images = torch.stack(misclassified_images)
-    correct_images = torch.stack(correct_images)
+    if len(misclassified_images) > 0:
+        misclassified_images = torch.stack(misclassified_images)
+        correct_images = torch.stack(correct_images)
+        plt.figure(figsize=(15, 8))
+        for i in range(5):
+            plt.subplot(2, 5, i + 1)
+            plt.imshow(misclassified_images[i].cpu().numpy().squeeze(), cmap='gray')
+            plt.title(f"Misclassified\nPred: {misclassified_labels[i]}, Correct: {test_label[misclassified_indices][i].item()}")
+            plt.axis('off')
 
-    plt.figure(figsize=(15, 8))
-    for i in range(5):
-        plt.subplot(2, 5, i + 1)
-        plt.imshow(misclassified_images[i].cpu().numpy().squeeze(), cmap='gray')
-        plt.title(f"Misclassified\nPred: {misclassified_labels[i]}, Correct: {test_label[misclassified_indices][i].item()}")
-        plt.axis('off')
-
-        plt.subplot(2, 5, i + 6)
-        plt.imshow(correct_images[i].cpu().numpy().squeeze(), cmap='gray')
-        plt.title(f"Correctly Classified\nPred: {correct_labels[i]}, Correct: {test_label[correct_indices][i].item()}")
-        plt.axis('off')
+            plt.subplot(2, 5, i + 6)
+            plt.imshow(correct_images[i].cpu().numpy().squeeze(), cmap='gray')
+            plt.title(f"Correctly Classified\nPred: {correct_labels[i]}, Correct: {test_label[correct_indices][i].item()}")
+            plt.axis('off')
+    else:
+        print("No misclassified images to display.")
 
     plt.tight_layout()
     plt.savefig('misclassified_images.png')
     plt.show()
+
+
 
 
 if __name__ == '__main__':
