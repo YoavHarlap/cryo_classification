@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+import torch
 import os
 import numpy as np
 import torch
@@ -12,20 +14,26 @@ from model import Model  # Make sure you have a file named 'model.py' with the M
 
 
 def plot_accuracy(epochs, accuracies):
-    plt.figure(figsize=(10, 5))
-    plt.plot(epochs, accuracies, marker='o')
-    plt.xlabel('Epoch')
-    plt.ylabel('Accuracy')
-    plt.title('Accuracy Over Epochs')
-    plt.grid(True)
-    plt.savefig('accuracy_plot.png')
-    plt.show()
+    print("hi")
+    # plt.figure(figsize=(10, 5))
+    # plt.plot(epochs, accuracies, marker='o')
+    # plt.xlabel('Epoch')
+    # plt.ylabel('Accuracy')
+    # plt.title('Accuracy Over Epochs')
+    # plt.grid(True)
+    # plt.savefig('accuracy_plot.png')
+    # plt.show()
 
 
 
 import matplotlib.pyplot as plt
 
-def show_misclassified_images(test_loader, model, device):
+import matplotlib.pyplot as plt
+import torch
+import matplotlib.pyplot as plt
+import torch
+
+def show_misclassified_images(test_loader, model, device, max_display=5):
     model.eval()
     misclassified_images = []
     misclassified_labels = []
@@ -44,7 +52,7 @@ def show_misclassified_images(test_loader, model, device):
         if predict_y.shape[0] == 0:
             print("Predictions array is empty.")
         else:
-            if misclassified_indices.shape[0] == 0:
+            if misclassified_indices.shape == torch.Size([]):
                 print("Misclassified indices array is empty.")
             else:
                 print("Misclassified indices array is not empty.")
@@ -54,20 +62,21 @@ def show_misclassified_images(test_loader, model, device):
         correct_images.extend(test_x[correct_indices])
         correct_labels.extend(predict_y[correct_indices].cpu().numpy())
 
-        if len(misclassified_images) >= 5 and len(correct_images) >= 5:
-            break
+        # if len(misclassified_images) >= max_display and len(correct_images) >= max_display:
+        #     break
 
     if len(misclassified_images) > 0:
         misclassified_images = torch.stack(misclassified_images)
         correct_images = torch.stack(correct_images)
         plt.figure(figsize=(15, 8))
-        for i in range(5):
-            plt.subplot(2, 5, i + 1)
+        max_display = min(max_display,len(misclassified_images))
+        for i in range(max_display):
+            plt.subplot(2, max_display, i + 1)
             plt.imshow(misclassified_images[i].cpu().numpy().squeeze(), cmap='gray')
             plt.title(f"Misclassified\nPred: {misclassified_labels[i]}, Correct: {test_label[misclassified_indices][i].item()}")
             plt.axis('off')
 
-            plt.subplot(2, 5, i + 6)
+            plt.subplot(2, max_display, i + 1 + max_display)
             plt.imshow(correct_images[i].cpu().numpy().squeeze(), cmap='gray')
             plt.title(f"Correctly Classified\nPred: {correct_labels[i]}, Correct: {test_label[correct_indices][i].item()}")
             plt.axis('off')
@@ -77,9 +86,6 @@ def show_misclassified_images(test_loader, model, device):
     plt.tight_layout()
     plt.savefig('misclassified_images.png')
     plt.show()
-
-
-
 
 if __name__ == '__main__':
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -147,3 +153,4 @@ if __name__ == '__main__':
 
     # Show misclassified and correctly classified images
     show_misclassified_images(test_loader, model, device)
+
