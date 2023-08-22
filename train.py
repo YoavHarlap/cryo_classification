@@ -52,12 +52,22 @@ def show_misclassified_images(test_loader, model, device, max_display=5):
         if predict_y.shape[0] == 0:
             print("Predictions array is empty.")
         else:
-            if misclassified_indices.shape == torch.Size([]):
+            print("misclassified_indices.shape",misclassified_indices.shape)
+            print("misclassified_indices.numel()",misclassified_indices.numel())
+            if misclassified_indices.numel() == 0:
                 print("Misclassified indices array is empty.")
             else:
                 print("Misclassified indices array is not empty.")
+                print("misclassified_indices", misclassified_indices)
                 misclassified_images.extend(test_x[misclassified_indices])
-                misclassified_labels.extend(predict_y[misclassified_indices].cpu().numpy())
+
+                if predict_y[misclassified_indices].dim() == 0:  # Check if scalar
+                    misclassified_labels.extend([predict_y[misclassified_indices].item()])
+                    print("shape_scalar:", len([predict_y[misclassified_indices].item()]))
+                else:
+                    misclassified_labels.extend(predict_y[misclassified_indices].cpu().numpy())
+                    print("shape:",predict_y[misclassified_indices].cpu().numpy().shape)
+
 
         correct_images.extend(test_x[correct_indices])
         correct_labels.extend(predict_y[correct_indices].cpu().numpy())
@@ -70,10 +80,15 @@ def show_misclassified_images(test_loader, model, device, max_display=5):
         correct_images = torch.stack(correct_images)
         plt.figure(figsize=(15, 8))
         max_display = min(max_display,len(misclassified_images))
+        print(misclassified_indices)
+        print(misclassified_indices.shape)
+
         for i in range(max_display):
             plt.subplot(2, max_display, i + 1)
             plt.imshow(misclassified_images[i].cpu().numpy().squeeze(), cmap='gray')
-            plt.title(f"Misclassified\nPred: {misclassified_labels[i]}, Correct: {test_label[misclassified_indices][i].item()}")
+            plt.title(
+                f"Misclassified\nPred: {misclassified_labels[i]}, Correct: {test_label[misclassified_indices][i]}")
+
             plt.axis('off')
 
             plt.subplot(2, max_display, i + 1 + max_display)
@@ -95,8 +110,8 @@ if __name__ == '__main__':
     test_dataset = mnist.MNIST(root='./test', train=False, transform=ToTensor(), download=True)
 
     # Filter dataset to only include classes 0 and 1
-    train_indices = (train_dataset.targets == 0) | (train_dataset.targets == 1)
-    test_indices = (test_dataset.targets == 0) | (test_dataset.targets == 1)
+    train_indices = (train_dataset.targets == 4) | (train_dataset.targets == 9)
+    test_indices = (test_dataset.targets == 4) | (test_dataset.targets == 9)
 
     train_dataset = torch.utils.data.Subset(train_dataset, np.where(train_indices)[0])
     test_dataset = torch.utils.data.Subset(test_dataset, np.where(test_indices)[0])
