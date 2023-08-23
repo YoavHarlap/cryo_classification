@@ -11,7 +11,7 @@ from io import BytesIO
 
 import copy
 
-from sklearn.metrics import confusion_matrix
+# from sklearn.metrics import confusion_matrix
 import pandas as pd
 import numpy as np
 

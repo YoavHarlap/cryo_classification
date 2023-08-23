@@ -1,7 +1,9 @@
 from utils import *
+#pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 torchaudio==0.12.1 --extra-index-url https://download.pytorch.org/whl/cu113
 
 if torch.cuda.is_available():
     device = torch.device("cuda")
+    print("Cuda Available!!!!!!!!")
 else:
     device = torch.device("cpu")
     print("No Cuda Available")
@@ -24,13 +26,13 @@ lenet.eval()
 
 
 y_pred, y_true = predict_dl(lenet, val_dl,device=device)
-
-pd.DataFrame(confusion_matrix(y_true, y_pred, labels=np.arange(0, 10)))
-# Calculate confusion matrix
-conf_matrix = confusion_matrix(y_true, y_pred, labels=np.arange(0, 10))
-
-# Create a DataFrame for the confusion matrix
-conf_matrix_df = pd.DataFrame(conf_matrix)
+#
+# pd.DataFrame(confusion_matrix(y_true, y_pred, labels=np.arange(0, 10)))
+# # Calculate confusion matrix
+# conf_matrix = confusion_matrix(y_true, y_pred, labels=np.arange(0, 10))
+#
+# # Create a DataFrame for the confusion matrix
+# conf_matrix_df = pd.DataFrame(conf_matrix)
 
 import seaborn as sns
 
