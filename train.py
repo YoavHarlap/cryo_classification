@@ -1,57 +1,67 @@
-from model import Model
-import numpy as np
-import os
-import torch
-from torchvision.datasets import mnist
-from torch.nn import CrossEntropyLoss
-from torch.optim import SGD
+from utils import *
+from data import cryo_np_Dataset
 from torch.utils.data import DataLoader
-from torchvision.transforms import ToTensor
 
-if __name__ == '__main__':
-    print("before delete train")
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    print(device)
-    batch_size = 256
-    train_dataset = mnist.MNIST(root='./train', train=True, transform=ToTensor())
-    test_dataset = mnist.MNIST(root='./test', train=False, transform=ToTensor())
-    train_loader = DataLoader(train_dataset, batch_size=batch_size)
-    test_loader = DataLoader(test_dataset, batch_size=batch_size)
-    model = Model().to(device)
-    sgd = SGD(model.parameters(), lr=1e-1)
-    loss_fn = CrossEntropyLoss()
-    all_epoch = 100
-    prev_acc = 0
-    for current_epoch in range(all_epoch):
-        model.train()
-        for idx, (train_x, train_label) in enumerate(train_loader):
-            train_x = train_x.to(device)
-            train_label = train_label.to(device)
-            sgd.zero_grad()
-            predict_y = model(train_x.float())
-            loss = loss_fn(predict_y, train_label.long())
-            loss.backward()
-            sgd.step()
+numb_batch = 64
+MNIST = True
+MNIST = False
+print("MNIST:",MNIST)
+if MNIST:
+    T = torchvision.transforms.Compose([torchvision.transforms.ToTensor()])
+    train_data = torchvision.datasets.MNIST('mnist_data', train=True, download=True, transform=T)
+    val_data = torchvision.datasets.MNIST('mnist_data', train=False, download=True, transform=T)
 
-        all_correct_num = 0
-        all_sample_num = 0
-        model.eval()
+    train_dl = torch.utils.data.DataLoader(train_data, batch_size=numb_batch)
+    val_dl = torch.utils.data.DataLoader(val_data, batch_size=numb_batch)
 
-        for idx, (test_x, test_label) in enumerate(test_loader):
-            test_x = test_x.to(device)
-            test_label = test_label.to(device)
-            predict_y = model(test_x.float()).detach()
-            predict_y = torch.argmax(predict_y, dim=-1)
-            current_correct_num = predict_y == test_label
-            all_correct_num += np.sum(current_correct_num.to('cpu').numpy(), axis=-1)
-            all_sample_num += current_correct_num.shape[0]
-        acc = all_correct_num / all_sample_num
-        print('Epoch {}/{} - accuracy: {:.3f}'.format(current_epoch + 1, all_epoch, acc), flush=True)
+else:
+    # Transforms for custom images (you can customize this)
+    custom_transforms = torchvision.transforms.Compose([
+        torchvision.transforms.ToTensor(),
+    ])
 
-        if not os.path.isdir("models"):
-            os.mkdir("models")
-        torch.save(model, 'models/mnist_{:.3f}.pkl'.format(acc))
-        if np.abs(acc - prev_acc) < 1e-4:
-            break
-        prev_acc = acc
-    print("Model finished training")
+    # Paths to your numpy files
+    outliers_file_path = "/data/yoavharlap/10028_classification/outliers_images.npy"
+    particles_file_path = "/data/yoavharlap/10028_classification/particles_images.npy"
+
+
+
+    # Create custom datasets for train and validation
+    train_data = cryo_np_Dataset(outliers_file_path, particles_file_path, train=True, transform=custom_transforms)
+    val_data = cryo_np_Dataset(outliers_file_path, particles_file_path, train=False, transform=custom_transforms)
+
+    # Create dataloaders
+    train_dl = DataLoader(train_data, batch_size=numb_batch, shuffle=True)
+    val_dl = DataLoader(val_data, batch_size=numb_batch, shuffle=True)
+
+if torch.cuda.is_available():
+    device = torch.device("cuda")
+    print("Cuda Available!!!!!!!!")
+else:
+    device = torch.device("cpu")
+    print("No Cuda Available")
+lenet = train(train_dl, val_dl, numb_epoch=40, device=device)
+
+torch.save(lenet.state_dict(), "lenet2.pth")
+
+lenet = create_lenet().to(device)
+lenet.load_state_dict(torch.load("lenet2.pth"))
+lenet.eval()
+
+y_pred, y_true = predict_dl(lenet, val_dl, device=device)
+
+# pd.DataFrame(confusion_matrix(y_true, y_pred, labels=np.arange(0, 10)))
+
+path = "https://previews.123rf.com/images/aroas/aroas1704/aroas170400068/79321959-handwritten-sketch-black-number-8-on-white-background.jpg"
+r = requests.get(path)
+with BytesIO(r.content) as f:
+    img = Image.open(f).convert(mode="L")
+    img = img.resize((28, 28))
+x = (255 - np.expand_dims(np.array(img), -1)) / 255.
+
+plt.imshow(x.squeeze(-1), cmap="gray")
+plt.show()
+
+pred = inference(path, lenet, device=device)
+pred_idx = np.argmax(pred)
+print(f"Predicted: {pred_idx}, Prob: {pred[0][pred_idx] * 100} %")

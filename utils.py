@@ -14,26 +14,58 @@ import copy
 # from sklearn.metrics import confusion_matrix
 import pandas as pd
 import numpy as np
-
+import torch.nn as nn
 
 
 def create_lenet():
-    model = nn.Sequential(
-        nn.Conv2d(1, 6, 5, padding=2),
-        nn.ReLU(),
-        nn.AvgPool2d(2, stride=2),
-        nn.Conv2d(6, 16, 5, padding=0),
-        nn.ReLU(),
-        nn.AvgPool2d(2, stride=2),
-        nn.Flatten(),
-        nn.Linear(400, 120),
-        nn.ReLU(),
-        nn.Linear(120, 84),
-        nn.ReLU(),
-        nn.Linear(84, 10)
-    )
+    MNIST = False
+    if MNIST:
+        model = nn.Sequential(
+            nn.Conv2d(1, 6, 5, padding=2),
+            nn.ReLU(),
+            nn.AvgPool2d(2, stride=2),
+            nn.Conv2d(6, 16, 5, padding=0),
+            nn.ReLU(),
+            nn.AvgPool2d(2, stride=2),
+            nn.Flatten(),
+            nn.Linear(400, 120),
+            nn.ReLU(),
+            nn.Linear(120, 84),
+            nn.ReLU(),
+            nn.Linear(84, 10)
+        )
+    else:
+        model = nn.Sequential(
+            nn.Conv2d(1, 16, 3, padding=1),  # Increase the number of output channels
+            nn.ReLU(),
+            nn.Conv2d(16, 32, 3, padding=1),  # Additional convolutional layer
+            nn.ReLU(),
+            nn.MaxPool2d(2, stride=2),
+
+            nn.Conv2d(32, 64, 3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(64, 64, 3, padding=1),  # Additional convolutional layer
+            nn.ReLU(),
+            nn.MaxPool2d(2, stride=2),
+
+            nn.Conv2d(64, 128, 3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(128, 128, 3, padding=1),  # Additional convolutional layer
+            nn.ReLU(),
+            nn.MaxPool2d(2, stride=2),
+
+            nn.Flatten(),
+
+            nn.Linear(128 * 32 * 32, 512),  # Adjust the input size for flattened features
+            nn.ReLU(),
+            nn.Linear(512, 256),  # Larger fully connected layers
+            nn.ReLU(),
+            nn.Linear(256, 2)
+        )
     return model
-def validate(model, data,device = "cpu"):
+
+
+def validate(model, data, device="cpu"):
     total = 0
     correct = 0
     for i, (images, labels) in enumerate(data):
@@ -46,9 +78,7 @@ def validate(model, data,device = "cpu"):
     return correct * 100. / total
 
 
-
-
-def train(numb_epoch=3, lr=1e-3, device="cpu"):
+def train(train_dl, val_dl, numb_epoch=3, lr=1e-3, device="cpu"):
     accuracies = []
     cnn = create_lenet().to(device)
     cec = nn.CrossEntropyLoss()
@@ -57,24 +87,28 @@ def train(numb_epoch=3, lr=1e-3, device="cpu"):
     for epoch in range(numb_epoch):
         for i, (images, labels) in enumerate(train_dl):
             images = images.to(device)
+
+            #hanfatza
+            labels = labels.type(torch.LongTensor)  # casting to long
+
             labels = labels.to(device)
             optimizer.zero_grad()
             pred = cnn(images)
             loss = cec(pred, labels)
             loss.backward()
             optimizer.step()
-        accuracy = float(validate(cnn, val_dl,device=device))
+        accuracy = float(validate(cnn, val_dl, device=device))
         accuracies.append(accuracy)
         if accuracy > max_accuracy:
             best_model = copy.deepcopy(cnn)
             max_accuracy = accuracy
             print("Saving Best Model with Accuracy: ", accuracy)
-        print('Epoch:', epoch + 1,"/",numb_epoch, "Accuracy :", accuracy, '%')
+        print('Epoch:', epoch + 1, "/", numb_epoch, "Accuracy :", accuracy, '%')
     plt.plot(accuracies)
     return best_model
 
 
-def predict_dl(model, data,device = "cpu"):
+def predict_dl(model, data, device="cpu"):
     y_pred = []
     y_true = []
     for i, (images, labels) in enumerate(data):
@@ -85,7 +119,6 @@ def predict_dl(model, data,device = "cpu"):
         y_pred.extend(list(pred.numpy()))
         y_true.extend(list(labels.numpy()))
     return np.array(y_pred), np.array(y_true)
-
 
 
 def inference(path, model, device):
@@ -102,4 +135,3 @@ def inference(path, model, device):
     with torch.no_grad():
         pred = model(torch.unsqueeze(T(x), axis=0).float().to(device))
         return F.softmax(pred, dim=-1).cpu().numpy()
-
