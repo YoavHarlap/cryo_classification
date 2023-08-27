@@ -35,32 +35,47 @@ def create_lenet():
             nn.Linear(84, 10)
         )
     else:
+        # model = nn.Sequential(
+        #     nn.Conv2d(1, 16, 3, padding=1),  # Increase the number of output channels
+        #     nn.ReLU(),
+        #     nn.Conv2d(16, 32, 3, padding=1),  # Additional convolutional layer
+        #     nn.ReLU(),
+        #     nn.MaxPool2d(2, stride=2),
+        #
+        #     nn.Conv2d(32, 64, 3, padding=1),
+        #     nn.ReLU(),
+        #     nn.Conv2d(64, 64, 3, padding=1),  # Additional convolutional layer
+        #     nn.ReLU(),
+        #     nn.MaxPool2d(2, stride=2),
+        #
+        #     nn.Conv2d(64, 128, 3, padding=1),
+        #     nn.ReLU(),
+        #     nn.Conv2d(128, 128, 3, padding=1),  # Additional convolutional layer
+        #     nn.ReLU(),
+        #     nn.MaxPool2d(2, stride=2),
+        #
+        #     nn.Flatten(),
+        #
+        #     nn.Linear(128 * 32 * 32, 512),  # Adjust the input size for flattened features
+        #     nn.ReLU(),
+        #     nn.Linear(512, 256),  # Larger fully connected layers
+        #     nn.ReLU(),
+        #     nn.Linear(256, 2)
+        # )
         model = nn.Sequential(
-            nn.Conv2d(1, 16, 3, padding=1),  # Increase the number of output channels
-            nn.ReLU(),
-            nn.Conv2d(16, 32, 3, padding=1),  # Additional convolutional layer
+            nn.Conv2d(1, 16, 3, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(2, stride=2),
 
-            nn.Conv2d(32, 64, 3, padding=1),
-            nn.ReLU(),
-            nn.Conv2d(64, 64, 3, padding=1),  # Additional convolutional layer
-            nn.ReLU(),
-            nn.MaxPool2d(2, stride=2),
-
-            nn.Conv2d(64, 128, 3, padding=1),
-            nn.ReLU(),
-            nn.Conv2d(128, 128, 3, padding=1),  # Additional convolutional layer
+            nn.Conv2d(16, 32, 3, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(2, stride=2),
 
             nn.Flatten(),
 
-            nn.Linear(128 * 32 * 32, 512),  # Adjust the input size for flattened features
+            nn.Linear(32 * 64 * 64, 128),  # Adjust input size
             nn.ReLU(),
-            nn.Linear(512, 256),  # Larger fully connected layers
-            nn.ReLU(),
-            nn.Linear(256, 2)
+            nn.Linear(128, 2)
         )
     return model
 
@@ -84,11 +99,13 @@ def train(train_dl, val_dl, numb_epoch=3, lr=1e-3, device="cpu"):
     cec = nn.CrossEntropyLoss()
     optimizer = optim.Adam(cnn.parameters(), lr=lr)
     max_accuracy = 0
+    prev_accuracy = 100
+    counter = 0
     for epoch in range(numb_epoch):
         for i, (images, labels) in enumerate(train_dl):
             images = images.to(device)
 
-            #hanfatza
+            # hanfatza
             labels = labels.type(torch.LongTensor)  # casting to long
 
             labels = labels.to(device)
@@ -103,9 +120,15 @@ def train(train_dl, val_dl, numb_epoch=3, lr=1e-3, device="cpu"):
             best_model = copy.deepcopy(cnn)
             max_accuracy = accuracy
             print("Saving Best Model with Accuracy: ", accuracy)
-        print('Epoch:', epoch + 1, "/", numb_epoch, "Accuracy :", accuracy, '%')
+        # if accuracy <= prev_accuracy:
+        #     counter = counter + 1
+        # if counter == 3:
+        #     break
+        print('Epoch:', epoch + 1, "/", numb_epoch, "Accuracy :", accuracy, '%',"loss:",loss.item())
+
+        prev_accuracy = accuracy
     plt.plot(accuracies)
-    return best_model
+    return best_model,accuracy
 
 
 def predict_dl(model, data, device="cpu"):
