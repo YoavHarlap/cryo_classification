@@ -30,7 +30,7 @@ else:
     particles_data = np.load(particles_file_path)
     data = np.concatenate((outliers_data, particles_data), axis=0)
     labels = np.concatenate((np.ones(len(outliers_data)), np.zeros(len(particles_data))))
-    train_ratio = 0.8
+    train_ratio = 0.5
     total_samples = len(labels)
     train_samples = int(train_ratio * total_samples)
 
@@ -101,10 +101,15 @@ else:
 # plt.show()
 
 numb_epoch = 40
-lr = 1e-3
-lenet = train(train_dl, val_dl, numb_epoch=numb_epoch, lr=lr, device=device)
+lr = 1e-4
+# lenet,accuracy = train(train_dl, val_dl, numb_epoch=numb_epoch, lr=lr, device=device)
+loss,accuracy = train(train_dl, val_dl, numb_epoch=numb_epoch, lr=lr, device=device)
 
-torch.save(lenet.state_dict(), "lenet2.pth")
+plt.plot(accuracy, label='acc: 1e-4 40')
+plt.legend()
+plt.show()
+
+# torch.save(lenet.state_dict(), "lenet2.pth")
 
 # lenet = create_lenet().to(device)
 # lenet.load_state_dict(torch.load("lenet2.pth"))

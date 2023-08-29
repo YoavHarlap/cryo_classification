@@ -7,7 +7,7 @@ from torchvision import transforms
 
 # Custom Dataset class for loading numpy images
 class cryo_np_Dataset(Dataset):
-    def __init__(self, data,labels, train=True, train_ratio=0.8, transform=None):
+    def __init__(self, data,labels, train=True, transform=None):
         self.transform = transform
         self.data = data
         self.labels = labels

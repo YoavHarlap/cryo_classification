@@ -62,21 +62,67 @@ def create_lenet():
         #     nn.ReLU(),
         #     nn.Linear(256, 2)
         # )
+        # model = nn.Sequential(
+        #     nn.Conv2d(1, 16, 3, padding=1),
+        #     nn.ReLU(),
+        #     nn.MaxPool2d(2, stride=2),
+        #
+        #     nn.Conv2d(16, 32, 3, padding=1),
+        #     nn.ReLU(),
+        #     nn.MaxPool2d(2, stride=2),
+        #
+        #     nn.Flatten(),
+        #
+        #     nn.Linear(32 * 64 * 64, 128),  # Adjust input size
+        #     nn.ReLU(),
+        #     nn.Linear(128, 2)
+        # )
+
+        # model = nn.Sequential(
+        #     nn.Conv2d(1, 6, 5, padding=2),
+        #     nn.ReLU(),
+        #     nn.AvgPool2d(2, stride=2),
+        #     nn.Conv2d(6, 16, 5, padding=0),
+        #     nn.ReLU(),
+        #     nn.AvgPool2d(2, stride=2),
+        #     nn.Flatten(),
+        #     nn.Linear(16 * 61 * 61, 120),  # Adjust input size based on feature map size after convolutions
+        #     nn.ReLU(),
+        #     nn.Linear(120, 84),
+        #     nn.ReLU(),
+        #     nn.Linear(84, 2)  # Output 2 classes
+        # )
+        #
+        # model = nn.Sequential(
+        #     nn.Conv2d(1, 6, 5, padding=2),
+        #     nn.ReLU(),
+        #     nn.AvgPool2d(2, stride=2),
+        #     nn.Conv2d(6, 16, 5, padding=0),
+        #     nn.ReLU(),
+        #     nn.AvgPool2d(2, stride=2),
+        #     nn.Flatten(),
+        #     nn.Linear(16 * 32 * 32, 120),  # Correct input size based on feature map size after convolutions
+        #     nn.ReLU(),
+        #     nn.Linear(120, 84),
+        #     nn.ReLU(),
+        #     nn.Linear(84, 2)  # Output 2 classes
+        # )
+
         model = nn.Sequential(
-            nn.Conv2d(1, 16, 3, padding=1),
+            nn.Conv2d(1, 6, 5, padding=2),
             nn.ReLU(),
-            nn.MaxPool2d(2, stride=2),
-
-            nn.Conv2d(16, 32, 3, padding=1),
+            nn.AvgPool2d(2, stride=2),
+            nn.Conv2d(6, 16, 5, padding=0),
             nn.ReLU(),
-            nn.MaxPool2d(2, stride=2),
-
+            nn.AvgPool2d(2, stride=2),
             nn.Flatten(),
-
-            nn.Linear(32 * 64 * 64, 128),  # Adjust input size
+            nn.Linear(16 * 62 * 62, 120),  # Correct input size based on feature map size after convolutions
             nn.ReLU(),
-            nn.Linear(128, 2)
+            nn.Linear(120, 84),
+            nn.ReLU(),
+            nn.Linear(84, 2)  # Output 2 classes
         )
+
     return model
 
 
@@ -95,6 +141,7 @@ def validate(model, data, device="cpu"):
 
 def train(train_dl, val_dl, numb_epoch=3, lr=1e-3, device="cpu"):
     accuracies = []
+    loss_array = []
     cnn = create_lenet().to(device)
     cec = nn.CrossEntropyLoss()
     optimizer = optim.Adam(cnn.parameters(), lr=lr)
@@ -112,6 +159,7 @@ def train(train_dl, val_dl, numb_epoch=3, lr=1e-3, device="cpu"):
             optimizer.zero_grad()
             pred = cnn(images)
             loss = cec(pred, labels)
+            loss_array.append(loss)
             loss.backward()
 
             # Check gradients for NaN or Inf
@@ -139,7 +187,10 @@ def train(train_dl, val_dl, numb_epoch=3, lr=1e-3, device="cpu"):
 
         prev_accuracy = accuracy
     plt.plot(accuracies)
-    return best_model,accuracy
+    # return best_model,accuracy
+
+
+    return loss_array,accuracy
 
 
 def predict_dl(model, data, device="cpu"):
