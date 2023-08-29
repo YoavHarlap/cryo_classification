@@ -42,7 +42,6 @@
 # # print(f"Predicted: {pred_idx}, Prob: {pred[0][pred_idx] * 100} %")
 
 
-
 import re
 import matplotlib.pyplot as plt
 
@@ -147,3 +146,61 @@ plt.show()
 # plt.grid(True)
 # plt.show()
 #
+
+
+text = """/home/yoavharlap/miniconda3/envs/cryo_classification/bin/python /home/yoavharlap/PycharmProjects/cryo_classification/train.py
+MNIST: False
+Cuda Available!!!!!!!!
+new graph start here
+the lr is: 0.001
+the batch size is: 64
+the number of epochs is: 2
+Saving Best Model with Accuracy:  71.5321273803711
+Epoch: 1 / 2 Accuracy : 71.5321273803711 % loss: 0.48366907238960266
+Epoch: 2 / 2 Accuracy : 71.5321273803711 % loss: 0.6806074976921082
+new graph start here
+the lr is: 0.001
+the batch size is: 64
+the number of epochs is: 2
+Saving Best Model with Accuracy:  71.5321273803711
+Epoch: 1 / 2 Accuracy : 71.5321273803711 % loss: 0.5407228469848633
+Epoch: 2 / 2 Accuracy : 71.5321273803711 % loss: 0.7192851901054382
+new graph start here
+the lr is: 0.001
+the batch size is: 64
+the number of epochs is: 2
+Saving Best Model with Accuracy:  71.5321273803711
+Epoch: 1 / 2 Accuracy : 71.5321273803711 % loss: 0.5929076075553894
+Epoch: 2 / 2 Accuracy : 71.5321273803711 % loss: 0.4698238670825958
+new graph start here
+the lr is: 0.0001
+the batch size is: 64
+the number of epochs is: 2
+Saving Best Model with Accuracy:  70.1041030883789
+Epoch: 1 / 2 Accuracy : 70.1041030883789 % loss: 0.7379618287086487
+Saving Best Model with Accuracy:  71.5321273803711
+Epoch: 2 / 2 Accuracy : 71.5321273803711 % loss: 0.5938416719436646
+new graph start here
+the lr is: 0.0001
+the batch size is: 64
+the number of epochs is: 2
+Saving Best Model with Accuracy:  71.1178970336914
+Epoch: 1 / 2 Accuracy : 71.1178970336914 % loss: 0.6137155294418335
+Epoch: 2 / 2 Accuracy : 55.74753189086914 % loss: 0.5513162016868591
+new graph start here
+the lr is: 0.0001
+the batch size is: 64
+the number of epochs is: 2
+Saving Best Model with Accuracy:  71.51577758789062
+Epoch: 1 / 2 Accuracy : 71.51577758789062 % loss: 0.9690212607383728
+Saving Best Model with Accuracy:  77.6584701538086
+Epoch: 2 / 2 Accuracy : 77.6584701538086 % loss: 0.5328044295310974
+new graph start here
+the lr is: 1e-05
+the batch size is: 64
+the number of epochs is: 2
+Saving Best Model with Accuracy:  28.46786880493164
+Epoch: 1 / 2 Accuracy : 28.46786880493164 % loss: 15.853089332580566
+Saving Best Model with Accuracy:  71.5321273803711
+Epoch: 2 / 2 Accuracy : 71.5321273803711 % loss: 3.564964771270752
+"""

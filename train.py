@@ -60,33 +60,37 @@ else:
     print("No Cuda Available")
 
 # List of parameter options to try
-# learning_rates = [1e-4, 1e-4, 1e-5]
-# num_epochs_list = [80, 40, 60]
-#
-# # Initialize an index counter
-# index = 1
-# accuracy_arr = []
-# # Iterate over parameter combinations
-# for lr in learning_rates:
-#     for num_epochs in num_epochs_list:
-#         # Train the model with current parameter settings
-#         lenet,accuracy = train(train_dl, val_dl, num_epochs, lr, device=device)
-#         accuracy_arr.append(accuracy)
-#
-#
-#         # You can evaluate the model's performance on test data or print relevant metrics
-#
-#         # Create a filename with the index and parameter values
-#         filename = f"lenet_{index}_lr_{lr}_epochs_{num_epochs}.pt"
-#
-#         # Save the trained model with the index in the filename
-#         torch.save(lenet.state_dict(), filename)
-#
-#         # Increment the index counter
-#         index += 1
-#
-#         print(f"Model saved as: {filename}")
-#
+learning_rates = [1e-3, 1e-4, 1e-5]
+num_epochs_list = [40, 60, 80]
+
+# Initialize an index counter
+index = 1
+accuracy_arr = []
+# Iterate over parameter combinations
+for lr in learning_rates:
+    for num_epochs in num_epochs_list:
+        print("new graph start here")
+        print("the lr is:", lr)
+        print("the batch size is:", numb_batch)
+        print("the number of epochs is:", num_epochs)
+        # Train the model with current parameter settings
+        lenet,accuracy = train(train_dl, val_dl, num_epochs, lr, device=device)
+        accuracy_arr.append(accuracy)
+
+
+        # You can evaluate the model's performance on test data or print relevant metrics
+
+        # Create a filename with the index and parameter values
+        # filename = f"lenet_{index}_lr_{lr}_epochs_{num_epochs}.pt"
+        #
+        # # Save the trained model with the index in the filename
+        # torch.save(lenet.state_dict(), filename)
+        #
+        # # Increment the index counter
+        # index += 1
+        #
+        # print(f"Model saved as: {filename}")
+
 #
 # plt.plot(accuracy_arr[0], label='1e-3 40')
 # plt.plot(accuracy_arr[1], label='1e-3 60')
@@ -100,14 +104,17 @@ else:
 # plt.legend()
 # plt.show()
 
-numb_epoch = 40
-lr = 1e-4
-# lenet,accuracy = train(train_dl, val_dl, numb_epoch=numb_epoch, lr=lr, device=device)
-loss,accuracy = train(train_dl, val_dl, numb_epoch=numb_epoch, lr=lr, device=device)
-
-plt.plot(accuracy, label='acc: 1e-4 40')
-plt.legend()
-plt.show()
+# numb_epoch = 40
+# lr = 1e-4
+# print("the lr is:" ,lr)
+# print("the batch size is:", numb_batch)
+# print("the number of epochs is:", numb_epoch)
+# # lenet,accuracy = train(train_dl, val_dl, numb_epoch=numb_epoch, lr=lr, device=device)
+# loss,accuracy = train(train_dl, val_dl, numb_epoch=numb_epoch, lr=lr, device=device)
+#
+# plt.plot(accuracy, label='acc: 1e-4 40')
+# plt.legend()
+# plt.show()
 
 # torch.save(lenet.state_dict(), "lenet2.pth")
 
