@@ -113,6 +113,17 @@ def train(train_dl, val_dl, numb_epoch=3, lr=1e-3, device="cpu"):
             pred = cnn(images)
             loss = cec(pred, labels)
             loss.backward()
+
+            # Check gradients for NaN or Inf
+            has_nan = any(torch.isnan(param.grad).any() for param in cnn.parameters())
+            has_inf = any(torch.isinf(param.grad).any() for param in cnn.parameters())
+            if has_nan or has_inf:
+                print("Gradients contain NaN or Inf values!")
+            # else:
+            #     print("Gradients is OK!")
+
+
+
             optimizer.step()
         accuracy = float(validate(cnn, val_dl, device=device))
         accuracies.append(accuracy)

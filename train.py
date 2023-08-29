@@ -60,45 +60,51 @@ else:
     print("No Cuda Available")
 
 # List of parameter options to try
-learning_rates = [1e-3, 1e-4, 1e-5]
-num_epochs_list = [40, 60, 80]
+# learning_rates = [1e-4, 1e-4, 1e-5]
+# num_epochs_list = [80, 40, 60]
+#
+# # Initialize an index counter
+# index = 1
+# accuracy_arr = []
+# # Iterate over parameter combinations
+# for lr in learning_rates:
+#     for num_epochs in num_epochs_list:
+#         # Train the model with current parameter settings
+#         lenet,accuracy = train(train_dl, val_dl, num_epochs, lr, device=device)
+#         accuracy_arr.append(accuracy)
+#
+#
+#         # You can evaluate the model's performance on test data or print relevant metrics
+#
+#         # Create a filename with the index and parameter values
+#         filename = f"lenet_{index}_lr_{lr}_epochs_{num_epochs}.pt"
+#
+#         # Save the trained model with the index in the filename
+#         torch.save(lenet.state_dict(), filename)
+#
+#         # Increment the index counter
+#         index += 1
+#
+#         print(f"Model saved as: {filename}")
+#
+#
+# plt.plot(accuracy_arr[0], label='1e-3 40')
+# plt.plot(accuracy_arr[1], label='1e-3 60')
+# plt.plot(accuracy_arr[2], label='1e-3 80')
+# plt.plot(accuracy_arr[3], label='1e-4 40')
+# plt.plot(accuracy_arr[4], label='1e-4 60')
+# plt.plot(accuracy_arr[5], label='1e-4 80')
+# plt.plot(accuracy_arr[6], label='1e-5 40')
+# plt.plot(accuracy_arr[7], label='1e-5 60')
+# plt.plot(accuracy_arr[8], label='1e-5 80')
+# plt.legend()
+# plt.show()
 
-# Initialize an index counter
-index = 1
-accuracy_arr = []
-# Iterate over parameter combinations
-for lr in learning_rates:
-    for num_epochs in num_epochs_list:
-        # Train the model with current parameter settings
-        lenet,accuracy = train(train_dl, val_dl, num_epochs, lr, device=device)
-        accuracy_arr.append(accuracy)
+numb_epoch = 40
+lr = 1e-3
+lenet = train(train_dl, val_dl, numb_epoch=numb_epoch, lr=lr, device=device)
 
-
-        # You can evaluate the model's performance on test data or print relevant metrics
-
-        # Create a filename with the index and parameter values
-        filename = f"lenet_{index}_lr_{lr}_epochs_{num_epochs}.pt"
-
-        # Save the trained model with the index in the filename
-        torch.save(lenet.state_dict(), filename)
-
-        # Increment the index counter
-        index += 1
-
-        print(f"Model saved as: {filename}")
-
-plt.plot(accuracy_arr[0], label='Model 1')
-plt.plot(accuracy_arr[1], label='Model 2')
-plt.plot(accuracy_arr[2], label='Model 3')
-plt.plot(accuracy_arr[3], label='Model 4')
-plt.plot(accuracy_arr[4], label='Model 5')
-plt.plot(accuracy_arr[5], label='Model 6')
-plt.show()
-
-
-# lenet = train(train_dl, val_dl, numb_epoch=40, lr=1e-3, device=device)
-
-# torch.save(lenet.state_dict(), "lenet2.pth")
+torch.save(lenet.state_dict(), "lenet2.pth")
 
 # lenet = create_lenet().to(device)
 # lenet.load_state_dict(torch.load("lenet2.pth"))
