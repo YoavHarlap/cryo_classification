@@ -30,7 +30,7 @@ else:
     particles_data = np.load(particles_file_path)
     data = np.concatenate((outliers_data, particles_data), axis=0)
     labels = np.concatenate((np.ones(len(outliers_data)), np.zeros(len(particles_data))))
-    train_ratio = 0.5
+    train_ratio = 0.8
     total_samples = len(labels)
     train_samples = int(train_ratio * total_samples)
 
@@ -49,7 +49,7 @@ else:
                                transform=custom_transforms)
 
     # Create dataloaders
-    train_dl = DataLoader(train_data, batch_size=numb_batch, shuffle=True)
+    train_dl = DataLoader(train_data, batch_size=numb_batch, shuffle=False)
     val_dl = DataLoader(val_data, batch_size=numb_batch, shuffle=False)
 
 if torch.cuda.is_available():
@@ -60,8 +60,10 @@ else:
     print("No Cuda Available")
 
 # List of parameter options to try
-learning_rates = [1e-3, 1e-4, 1e-5]
-num_epochs_list = [40, 60, 80]
+# learning_rates = [1e-5, 1e-6, 1e-7]
+# num_epochs_list = [40, 60, 80]
+learning_rates = [1e-5]
+num_epochs_list = [100]
 
 # Initialize an index counter
 index = 1

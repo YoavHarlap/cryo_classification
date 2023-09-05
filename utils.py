@@ -141,6 +141,7 @@ def validate(model, data, device="cpu"):
 
 def train(train_dl, val_dl, numb_epoch=3, lr=1e-3, device="cpu"):
     accuracies = []
+    test_accuracies = []
     loss_array = []
     cnn = create_lenet().to(device)
     cec = nn.CrossEntropyLoss()
@@ -173,7 +174,9 @@ def train(train_dl, val_dl, numb_epoch=3, lr=1e-3, device="cpu"):
 
 
             optimizer.step()
-        accuracy = float(validate(cnn, val_dl, device=device))
+        # accuracy = float(validate(cnn, val_dl, device=device))
+        accuracy = float(validate(cnn, train_dl, device=device))
+
         accuracies.append(accuracy)
         if accuracy > max_accuracy:
             best_model = copy.deepcopy(cnn)
@@ -186,7 +189,7 @@ def train(train_dl, val_dl, numb_epoch=3, lr=1e-3, device="cpu"):
         print('Epoch:', epoch + 1, "/", numb_epoch, "Accuracy :", accuracy, '%',"loss:",loss.item())
 
         prev_accuracy = accuracy
-    plt.plot(accuracies)
+    # plt.plot(accuracies)
     # return best_model,accuracy
 
 
