@@ -2942,7 +2942,7 @@ for section in graph_sections:
     lr_match = re.search(r"the lr is: ([\d.e-]+)", section)
     lr = float(lr_match.group(1))
 
-    batch_size = re.search(r"the batch size is: ([\d.]+)", section).group(1)
+    batch_size =  re.search(r"the batch size is: ([\d.]+)", section).group(1)
     num_epochs = re.search(r"the number of epochs is: ([\d.]+)", section).group(1)
     epochs = re.findall(r"Epoch: (\d+) / \d+ Accuracy : ([\d.]+) % loss: ([\d.]+)", section)
 

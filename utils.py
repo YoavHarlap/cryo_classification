@@ -176,7 +176,9 @@ def train(train_dl, val_dl, numb_epoch=3, lr=1e-3, device="cpu"):
             optimizer.step()
         # accuracy = float(validate(cnn, val_dl, device=device))
         accuracy = float(validate(cnn, train_dl, device=device))
+        test_acc = float(validate(cnn, val_dl, device=device))
 
+        test_accuracies.append(test_acc)
         accuracies.append(accuracy)
         if accuracy > max_accuracy:
             best_model = copy.deepcopy(cnn)
@@ -186,7 +188,7 @@ def train(train_dl, val_dl, numb_epoch=3, lr=1e-3, device="cpu"):
         #     counter = counter + 1
         # if counter == 3:
         #     break
-        print('Epoch:', epoch + 1, "/", numb_epoch, "Accuracy :", accuracy, '%',"loss:",loss.item())
+        print('Epoch:', epoch + 1, "/", numb_epoch, "Accuracy :", accuracy, '%',"loss:",loss.item(),"test_acc:",test_acc)
 
         prev_accuracy = accuracy
     # plt.plot(accuracies)
