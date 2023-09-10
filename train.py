@@ -63,7 +63,7 @@ else:
 # learning_rates = [1e-5, 1e-6, 1e-7]
 # num_epochs_list = [40, 60, 80]
 learning_rates = [1e-5]
-num_epochs_list = [100]
+num_epochs_list = [150]
 
 # Initialize an index counter
 index = 1
@@ -71,7 +71,7 @@ accuracy_arr = []
 # Iterate over parameter combinations
 for lr in learning_rates:
     for num_epochs in num_epochs_list:
-        print("new graph start here")
+        print("new graph starts here")
         print("the lr is:", lr)
         print("the batch size is:", numb_batch)
         print("the number of epochs is:", num_epochs)
