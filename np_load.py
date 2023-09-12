@@ -3,7 +3,10 @@ import matplotlib.pyplot as plt
 
 # Load all_images_array from the saved .npy file
 output_npy_file = "/data/yoavharlap/10028_classification/outliers_images.npy"
-output_npy_file = "/data/yoavharlap/10028_classification/particles_images.npy"
+# output_npy_file = "/data/yoavharlap/10028_classification/particles_images.npy"
+output_npy_file = "/data/yoavharlap/10028_classification/zero_images.npy"
+output_npy_file = "/data/yoavharlap/10028_classification/one_images.npy"
+
 
 all_images_array = np.load(output_npy_file)
 
