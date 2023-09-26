@@ -76,6 +76,7 @@ def create_lenet():
         #     nn.Linear(32 * 64 * 64, 128),  # Adjust input size
         #     nn.ReLU(),
         #     nn.Linear(128, 2)
+        # print
         # )
 
         # model = nn.Sequential(

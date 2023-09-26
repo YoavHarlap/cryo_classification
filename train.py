@@ -30,7 +30,7 @@ else:
     particles_data = np.load(particles_file_path)
     data = np.concatenate((outliers_data, particles_data), axis=0)
     labels = np.concatenate((np.ones(len(outliers_data)), np.zeros(len(particles_data))))
-    train_ratio = 0.8
+    train_ratio = 0.1
     total_samples = len(labels)
     train_samples = int(train_ratio * total_samples)
 
