@@ -1,6 +1,6 @@
 import re
 import matplotlib.pyplot as plt
-
+print("a")
 # Provided text (including additional parameters)
 text = """
 /home/yoavharlap/miniconda3/envs/cryo_classification/bin/python /home/yoavharlap/PycharmProjects/cryo_classification/train.py
