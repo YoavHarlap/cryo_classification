@@ -2,7 +2,7 @@ import re
 import matplotlib.pyplot as plt
 print("ab")
 # Provided text (including additional parameters)
-text2 = """
+text3 = """
 /home/yoavharlap/miniconda3/envs/cryo_classification/bin/python /home/yoavharlap/PycharmProjects/cryo_classification/train.py
 MNIST: False
 Cuda Available!!!!!!!!
