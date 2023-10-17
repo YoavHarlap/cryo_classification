@@ -4,11 +4,6 @@ import sys
 log_file_path = "save_logs.txt"
 log_file_path = "/home/yoavharlap/PycharmProjects/cryo_classification/save_logs.txt"
 
-import sys
-from io import StringIO
-
-log_file_path = "/home/yoavharlap/PycharmProjects/cryo_classification/save_logs.txt"
-
 # Custom file-like object that writes to both stdout and a file
 class Tee:
     def __init__(self, *files):
