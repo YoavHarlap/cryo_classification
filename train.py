@@ -1,4 +1,14 @@
 import matplotlib.pyplot as plt
+import sys
+
+log_file_path = "/home/yoavharlap/PycharmProjects/cryo_classification/save_logs.txt"
+
+# Redirect standard output to the log file
+sys.stdout = open(log_file_path, "w")
+
+# Your print statements
+print("This will be saved in the log file.")
+print("Another message to log.")
 
 from utils import *
 from data import cryo_np_Dataset
@@ -30,7 +40,7 @@ else:
     particles_data = np.load(particles_file_path)
     data = np.concatenate((outliers_data, particles_data), axis=0)
     labels = np.concatenate((np.ones(len(outliers_data)), np.zeros(len(particles_data))))
-    train_ratio = 0.1
+    train_ratio = 0.8
     total_samples = len(labels)
     train_samples = int(train_ratio * total_samples)
 
@@ -63,7 +73,7 @@ else:
 # learning_rates = [1e-5, 1e-6, 1e-7]
 # num_epochs_list = [40, 60, 80]
 learning_rates = [1e-5]
-num_epochs_list = [150]
+num_epochs_list = [5]
 
 # Initialize an index counter
 index = 1
@@ -79,6 +89,11 @@ for lr in learning_rates:
         lenet,accuracy = train(train_dl, val_dl, num_epochs, lr, device=device)
         accuracy_arr.append(accuracy)
 
+
+
+# Restore standard output to the console (optional)
+sys.stdout.close()
+sys.stdout = sys.__stdout__
 
         # You can evaluate the model's performance on test data or print relevant metrics
 

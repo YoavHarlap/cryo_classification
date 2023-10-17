@@ -17,7 +17,7 @@ import numpy as np
 import torch.nn as nn
 
 
-def create_lenet():
+def create_lenet(dropout_prob =0.5):
     MNIST = False
     if MNIST:
         model = nn.Sequential(
@@ -107,7 +107,9 @@ def create_lenet():
         #     nn.Linear(120, 84),
         #     nn.ReLU(),
         #     nn.Linear(84, 2)  # Output 2 classes
-        # )
+        # # )
+        # workkkk
+
 
         model = nn.Sequential(
             nn.Conv2d(1, 6, 5, padding=2),
@@ -123,6 +125,23 @@ def create_lenet():
             nn.ReLU(),
             nn.Linear(84, 2)  # Output 2 classes
         )
+
+        # model = nn.Sequential(
+        #     nn.Conv2d(1, 6, 5, padding=2),
+        #     nn.ReLU(),
+        #     nn.AvgPool2d(2, stride=2),
+        #     nn.Conv2d(6, 16, 5, padding=0),
+        #     nn.ReLU(),
+        #     nn.AvgPool2d(2, stride=2),
+        #     nn.Flatten(),
+        #     nn.Linear(16 * 62 * 62, 120),
+        #     nn.ReLU(),
+        #     nn.Dropout(p=dropout_prob),  # Add dropout after the first fully connected layer
+        #     nn.Linear(120, 84),
+        #     nn.ReLU(),
+        #     nn.Linear(84, 2)
+        # )
+
 
     return model
 
