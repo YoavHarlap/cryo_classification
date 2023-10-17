@@ -1,14 +1,39 @@
 import matplotlib.pyplot as plt
 import sys
 
+log_file_path = "save_logs.txt"
 log_file_path = "/home/yoavharlap/PycharmProjects/cryo_classification/save_logs.txt"
 
-# Redirect standard output to the log file
-sys.stdout = open(log_file_path, "w")
+import sys
+from io import StringIO
 
-# Your print statements
-print("This will be saved in the log file.")
-print("Another message to log.")
+log_file_path = "/home/yoavharlap/PycharmProjects/cryo_classification/save_logs.txt"
+
+# Custom file-like object that writes to both stdout and a file
+class Tee:
+    def __init__(self, *files):
+        self.files = files
+
+    def write(self, obj):
+        for f in self.files:
+            f.write(obj)
+            f.flush()
+
+    def flush(self):
+        for f in self.files:
+            f.flush()
+
+# Create a log file to write to
+log_file = open(log_file_path, "w")
+
+# Redirect sys.stdout to the custom Tee object
+sys.stdout = Tee(sys.stdout, log_file)
+
+# Rest of your code...
+
+# Now, all print statements will write to both console and the log file
+
+#print("This message will be logged to the file and printed to the console.")
 
 from utils import *
 from data import cryo_np_Dataset
@@ -18,6 +43,7 @@ numb_batch = 64
 MNIST = True
 MNIST = False
 print("MNIST:", MNIST)
+
 if MNIST:
     T = torchvision.transforms.Compose([torchvision.transforms.ToTensor()])
     train_data = torchvision.datasets.MNIST('mnist_data', train=True, download=True, transform=T)
@@ -79,6 +105,7 @@ num_epochs_list = [5]
 index = 1
 accuracy_arr = []
 # Iterate over parameter combinations
+
 for lr in learning_rates:
     for num_epochs in num_epochs_list:
         print("new graph starts here")
@@ -86,27 +113,23 @@ for lr in learning_rates:
         print("the batch size is:", numb_batch)
         print("the number of epochs is:", num_epochs)
         # Train the model with current parameter settings
-        lenet,accuracy = train(train_dl, val_dl, num_epochs, lr, device=device)
+        lenet, accuracy = train(train_dl, val_dl, num_epochs, lr, device=device)
         accuracy_arr.append(accuracy)
 
 
 
-# Restore standard output to the console (optional)
-sys.stdout.close()
-sys.stdout = sys.__stdout__
+# You can evaluate the model's performance on test data or print relevant metrics
 
-        # You can evaluate the model's performance on test data or print relevant metrics
-
-        # Create a filename with the index and parameter values
-        # filename = f"lenet_{index}_lr_{lr}_epochs_{num_epochs}.pt"
-        #
-        # # Save the trained model with the index in the filename
-        # torch.save(lenet.state_dict(), filename)
-        #
-        # # Increment the index counter
-        # index += 1
-        #
-        # print(f"Model saved as: {filename}")
+# Create a filename with the index and parameter values
+# filename = f"lenet_{index}_lr_{lr}_epochs_{num_epochs}.pt"
+#
+# # Save the trained model with the index in the filename
+# torch.save(lenet.state_dict(), filename)
+#
+# # Increment the index counter
+# index += 1
+#
+# print(f"Model saved as: {filename}")
 
 #
 # plt.plot(accuracy_arr[0], label='1e-3 40')

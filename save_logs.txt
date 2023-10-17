@@ -1,0 +1,11 @@
+MNIST: False
+Cuda Available!!!!!!!!
+new graph starts here
+the lr is: 1e-05
+the batch size is: 64
+the number of epochs is: 5
+Saving Best Model with Accuracy:  44.63975524902344
+Epoch: 1 / 5 Accuracy : 44.63975524902344 % loss: 0.7555915713310242 test_acc: 43.820682525634766
+Epoch: 2 / 5 Accuracy : 28.005451202392578 % loss: 0.8265156149864197 test_acc: 28.368988037109375
+Epoch: 3 / 5 Accuracy : 28.005451202392578 % loss: 0.7662548422813416 test_acc: 28.368988037109375
+Epoch: 4 / 5 Accuracy : 38.705501556396484 % loss: 1.4072940349578857 test_acc: 38.60198974609375
