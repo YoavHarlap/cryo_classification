@@ -3,7 +3,7 @@ import sys
 
 log_file_path = "save_logs.txt"
 log_file_path = "/home/yoavharlap/PycharmProjects/cryo_classification/save_logs.txt"
-
+print("yoav")
 # Custom file-like object that writes to both stdout and a file
 class Tee:
     def __init__(self, *files):
@@ -94,7 +94,7 @@ else:
 # learning_rates = [1e-5, 1e-6, 1e-7]
 # num_epochs_list = [40, 60, 80]
 learning_rates = [1e-5]
-num_epochs_list = [5]
+num_epochs_list = [150]
 
 # Initialize an index counter
 index = 1

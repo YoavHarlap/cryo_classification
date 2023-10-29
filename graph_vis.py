@@ -196,13 +196,13 @@ Process finished with exit code 0
 import re
 import matplotlib.pyplot as plt
 
-# Read the content from the specified file
+# # Read the content from the specified file
 log_file_path = "save_logs.txt"
 with open(log_file_path, "r") as file:
-    text1 = file.read()
+     text = file.read()
 
 # Split the text into individual sections for each graph
-graph_sections = text1.split("new graph starts here\n")[1:]
+graph_sections = text.split("new graph starts here\n")[1:]
 
 for idx, section in enumerate(graph_sections):
     # Extract lr, batch size, number of epochs, epoch numbers, accuracies, loss values, and test_acc values using regex
@@ -211,7 +211,7 @@ for idx, section in enumerate(graph_sections):
     batch_size = int(re.search(r"the batch size is: ([\d.]+)", section).group(1))
     num_epochs = int(re.search(r"the number of epochs is: ([\d.]+)", section).group(1))
     data = re.findall(r"Epoch: (\d+) / \d+ Accuracy : ([\d.]+) % loss: ([\d.]+) test_acc: ([\d.]+)", section)
-
+    print(data[-20:])
     # Convert extracted data to appropriate types
     epoch_numbers, accuracies, loss_values, test_acc_values = zip(*data)
     epoch_numbers = list(map(int, epoch_numbers))
