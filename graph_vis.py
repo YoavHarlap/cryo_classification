@@ -1,5 +1,6 @@
 import re
 import matplotlib.pyplot as plt
+import sys
 print("ab")
 # Provided text (including additional parameters)
 text3 = """
@@ -211,6 +212,12 @@ for idx, section in enumerate(graph_sections):
     batch_size = int(re.search(r"the batch size is: ([\d.]+)", section).group(1))
     num_epochs = int(re.search(r"the number of epochs is: ([\d.]+)", section).group(1))
     data = re.findall(r"Epoch: (\d+) / \d+ Accuracy : ([\d.]+) % loss: ([\de.-]+) test_acc: ([\d.]+)", section)
+
+    print("num_epochs:", num_epochs)
+    print("len(data):", len(data))
+    if num_epochs != len(data):
+        print("Error: num_epochs and len(data) are not equal.")
+        sys.exit(1)
 
     print(data[-5:])
     # Convert extracted data to appropriate types
