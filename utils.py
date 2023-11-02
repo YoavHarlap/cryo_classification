@@ -110,24 +110,7 @@ def create_lenet(dropout_prob =0.5):
         # # )
         # workkkk
 
-        #original model
-        model = nn.Sequential(
-            nn.Conv2d(1, 6, 5, padding=2),
-            nn.ReLU(),
-            nn.AvgPool2d(2, stride=2),
-            nn.Conv2d(6, 16, 5, padding=0),
-            nn.ReLU(),
-            nn.AvgPool2d(2, stride=2),
-            nn.Flatten(),
-            nn.Linear(16 * 62 * 62, 120),  # Correct input size based on feature map size after convolutions
-            nn.ReLU(),
-            nn.Linear(120, 84),
-            nn.ReLU(),
-            nn.Linear(84, 2)  # Output 2 classes
-        )
-
-
-
+        # #original model
         # model = nn.Sequential(
         #     nn.Conv2d(1, 6, 5, padding=2),
         #     nn.ReLU(),
@@ -140,9 +123,26 @@ def create_lenet(dropout_prob =0.5):
         #     nn.ReLU(),
         #     nn.Linear(120, 84),
         #     nn.ReLU(),
-        #     nn.Dropout(0.5),  # Dropout layer with a dropout rate of 0.5
-        #     nn.Linear(84, 2) # Output 2 classes
+        #     nn.Linear(84, 2)  # Output 2 classes
         # )
+
+
+
+        model = nn.Sequential(
+            nn.Conv2d(1, 6, 5, padding=2),
+            nn.ReLU(),
+            nn.AvgPool2d(2, stride=2),
+            nn.Conv2d(6, 16, 5, padding=0),
+            nn.ReLU(),
+            nn.AvgPool2d(2, stride=2),
+            nn.Flatten(),
+            nn.Linear(16 * 62 * 62, 120),  # Correct input size based on feature map size after convolutions
+            nn.ReLU(),
+            nn.Linear(120, 84),
+            nn.ReLU(),
+            nn.Dropout(0.5),  # Dropout layer with a dropout rate of 0.5
+            nn.Linear(84, 2) # Output 2 classes
+        )
 
 
 

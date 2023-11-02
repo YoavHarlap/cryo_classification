@@ -80,10 +80,7 @@ else:
                                transform=custom_transforms)
 
 
-    ##########
-    train_data = train_data[:50]
-    val_data = val_data[:50]
-    ##########
+
 
     # Create dataloaders
     train_dl = DataLoader(train_data, batch_size=numb_batch, shuffle=False)
