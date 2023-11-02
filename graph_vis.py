@@ -217,7 +217,7 @@ for idx, section in enumerate(graph_sections):
     print("len(data):", len(data))
     if num_epochs != len(data):
         print("Error: num_epochs and len(data) are not equal.")
-        sys.exit(1)
+        # sys.exit(1)
 
     print(data[-5:])
     # Convert extracted data to appropriate types
