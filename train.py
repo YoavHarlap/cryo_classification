@@ -79,6 +79,12 @@ else:
     val_data = cryo_np_Dataset(shuffled_data[train_samples:], shuffled_labels[train_samples:], train=False,
                                transform=custom_transforms)
 
+
+    ##########
+    train_data = train_data[:50]
+    val_data = val_data[:50]
+    ##########
+
     # Create dataloaders
     train_dl = DataLoader(train_data, batch_size=numb_batch, shuffle=False)
     val_dl = DataLoader(val_data, batch_size=numb_batch, shuffle=False)
