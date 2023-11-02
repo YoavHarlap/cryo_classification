@@ -140,7 +140,7 @@ def create_lenet(dropout_prob =0.5):
             nn.ReLU(),
             nn.Linear(120, 84),
             nn.ReLU(),
-            nn.Dropout(0.5),  # Dropout layer with a dropout rate of 0.5
+            nn.Dropout(0.2),  # Dropout layer with a dropout rate of 0.5
             nn.Linear(84, 2) # Output 2 classes
         )
 
