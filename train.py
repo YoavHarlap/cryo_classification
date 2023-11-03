@@ -100,7 +100,8 @@ else:
 # learning_rates = [1e-5, 1e-6, 1e-7]
 # num_epochs_list = [40, 60, 80]
 learning_rates = [1e-4,1e-5,1e-6]
-num_epochs_list = [150]
+learning_rates = [1e-5,1e-6]
+num_epochs_list = [200]
 
 # Initialize an index counter
 index = 1
