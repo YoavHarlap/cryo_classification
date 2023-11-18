@@ -185,8 +185,8 @@ def train(train_dl, val_dl, numb_epoch=3, lr=1e-3, device="cpu"):
     loss_array = []
     cnn = create_lenet().to(device)
     cec = nn.CrossEntropyLoss()
-    # optimizer = optim.Adam(cnn.parameters(), lr=lr)
-    optimizer = optim.SGD(cnn.parameters(), lr=lr)
+    optimizer = optim.Adam(cnn.parameters(), lr=lr)
+    #optimizer = optim.SGD(cnn.parameters(), lr=lr)
     max_accuracy = 0
     prev_accuracy = 100
     counter = 0
